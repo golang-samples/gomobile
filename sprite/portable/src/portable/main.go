@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"log"
+	"net"
 	"net/http"
 	"sync"
 	"time"
@@ -122,6 +123,14 @@ func newEngine() sprite.Engine {
 			log.Println(err)
 		}
 	})
+
+	if addrs, err := net.InterfaceAddrs(); err == nil {
+		for _, a := range addrs {
+			if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+				log.Println("Addr", ipnet.IP.String())
+			}
+		}
+	}
 
 	go http.ListenAndServe(":8080", nil)
 
